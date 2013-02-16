@@ -135,7 +135,7 @@ def send_message_from_jack(recipient, subject, body):
     body : `str`
 
     """
-    return send_message(_get_default_sender, recipient, subject, body)
+    return send_message(_get_default_sender(), recipient, subject, body)
 
 
 def send_message_as_jack(sender_email, recipient, subject, body):
@@ -187,7 +187,7 @@ def send_message(sender, recipient, subject, body):
 
 
 def _get_default_sender():
-    return _get_sender(_default_name, _default_email())
+    return _get_sender(_default_name, _default_email)
 
 
 def _get_sender(name, email):
