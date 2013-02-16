@@ -9,7 +9,7 @@
 import requests
 
 from jutil.decorators import constant
-
+from jutil.environment import Deployment
 
 MAILGUN_API_URL = unicode("https://api.mailgun.net/v2")
 MAILGUN_MESSAGES_SUFFIX = unicode("messages")
@@ -107,7 +107,7 @@ class _Mail(object):
 MAIL = _Mail()
 
 
-def initialize(api_key, domain, name="", email=""):
+def initialize(api_key, domain, email, name=None):
     """Set the api key and domain for the mailgun account to use."""
     global _mailgun_api_key
     global _mailgun_domain
@@ -116,8 +116,11 @@ def initialize(api_key, domain, name="", email=""):
 
     _mailgun_api_key = api_key
     _mailgun_domain = domain
-    _default_name = name
     _default_email = email
+    if name:
+        _default_name = name
+    else:
+        _default_name = _get_default_sender_name()
 
 
 def send_message_from_jack(recipient, subject, body):
@@ -189,3 +192,16 @@ def _get_default_sender():
 
 def _get_sender(name, email):
     return unicode("{} <{}>").format(name, email)
+
+
+def _get_default_sender_name():
+    name = ""
+
+    if Deployment.is_prod():
+        name = "Jack Lope"
+    elif Deployment.is_staging():
+        name = "Jack Staging"
+    elif Deployment.is_dev():
+        name = "Jack Dev"
+
+    return unicode(name)
