@@ -136,7 +136,7 @@ def send_comment_on_task(service, task_id, recipient, message):
     message : str
 
     """
-    from_email = unicode("{}-comment-{}@{}").format(
+    from_email = unicode("{}-{}-comment@{}").format(
             service,
             task_id,
             _mailgun_domain)
