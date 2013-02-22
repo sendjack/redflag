@@ -18,7 +18,7 @@ _mailgun_api_key = None
 _mailgun_domain = None
 _default_name = unicode("")
 _default_email = unicode("")
-_new_comment_subject = unicode("A comment on the task.")
+_new_comment_subject = unicode("A comment on task ")
 
 
 class _Mail(object):
@@ -141,10 +141,11 @@ def send_comment_on_task(service, task_id, recipient, message):
             task_id,
             _mailgun_domain)
 
+    subject = unicode("{} {}.").format(_new_comment_subject, task_id)
     send_email_as_jack(
             from_email,
             recipient,
-            _new_comment_subject,
+            subject,
             message)
 
 
