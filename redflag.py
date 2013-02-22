@@ -16,8 +16,9 @@ MAILGUN_MESSAGES_SUFFIX = unicode("messages")
 
 _mailgun_api_key = None
 _mailgun_domain = None
-_default_name = ""
-_default_email = ""
+_default_name = unicode("")
+_default_email = unicode("")
+_new_comment_subject = unicode("A comment on the task.")
 
 
 class _Mail(object):
@@ -123,8 +124,32 @@ def initialize(api_key, domain, email, name=None):
         _default_name = _get_default_sender_name()
 
 
-def send_message_from_jack(recipient, subject, body):
-    """Send a smtp message using Mailgun's API with 'Jack Lope' as the sender
+def send_comment_on_task(service, task_id, recipient, message):
+    """Send an smtp email for a task using Mailgun's API.
+
+    Parameters
+    ----------
+    service : str
+    task_id : id
+    recipient : str
+        Formatted as "Name <email@domain.com>"
+    message : str
+
+    """
+    from_email = unicode("{}-comment-{}@{}").format(
+            service,
+            task_id,
+            _mailgun_domain)
+
+    send_email_as_jack(
+            from_email,
+            recipient,
+            _new_comment_subject,
+            message)
+
+
+def send_email_from_jack(recipient, subject, body):
+    """Send a smtp email using Mailgun's API with 'Jack Lope' as the sender
     and return the response dict.
 
     Parameters
@@ -135,11 +160,11 @@ def send_message_from_jack(recipient, subject, body):
     body : `str`
 
     """
-    return send_message(_get_default_sender(), recipient, subject, body)
+    return send_email(_get_default_sender(), recipient, subject, body)
 
 
-def send_message_as_jack(sender_email, recipient, subject, body):
-    """Send a smtp mesage using Mailgun's API with 'Jack Lope' as
+def send_email_as_jack(sender_email, recipient, subject, body):
+    """Send a smtp email using Mailgun's API with 'Jack Lope' as
     the name and the sender_email as the email, and return the response dict.
 
     Parameters
@@ -152,11 +177,11 @@ def send_message_as_jack(sender_email, recipient, subject, body):
 
     """
     sender = _get_sender(_default_name, sender_email)
-    return send_message(sender, recipient, subject, body)
+    return send_email(sender, recipient, subject, body)
 
 
-def send_message(sender, recipient, subject, body):
-    """Send a smtp message using Mailgun's API and return the response dict.
+def send_email(sender, recipient, subject, body):
+    """Send a smtp email using Mailgun's API and return the response dict.
 
     Parameters
     ----------
