@@ -149,6 +149,19 @@ def send_comment_on_task(service, task_id, recipient, message):
             message)
 
 
+def send_email_to_customer(customer, subject, body_text):
+    """Send email to customer from Jackalope."""
+    print 'customer', customer
+    recipient = _format_email_with_name(customer.full_name, customer.email)
+    return send_email_from_jack(recipient, subject, body_text)
+
+
+def send_internal_email_from_service(service, id, subject, body_text):
+    """Send internal email from a service."""
+    recipient = unicode("{}-{}@{}").format(service, id, _mailgun_domain)
+    return send_email_from_jack(recipient, subject, body_text)
+
+
 def send_email_from_jack(recipient, subject, body):
     """Send a smtp email using Mailgun's API with 'Jack Lope' as the sender
     and return the response dict.
@@ -177,7 +190,7 @@ def send_email_as_jack(sender_email, recipient, subject, body):
     body : `str`
 
     """
-    sender = _get_sender(_default_name, sender_email)
+    sender = _format_email_with_name(_default_name, sender_email)
     return send_email(sender, recipient, subject, body)
 
 
@@ -194,6 +207,7 @@ def send_email(sender, recipient, subject, body):
     body : `str`
 
     """
+    print 'send_email', sender, recipient, subject, body
     data_dict = {
             MAIL.FROM: sender,
             MAIL.TO: [recipient],
@@ -213,10 +227,10 @@ def send_email(sender, recipient, subject, body):
 
 
 def _get_default_sender():
-    return _get_sender(_default_name, _default_email)
+    return _format_email_with_name(_default_name, _default_email)
 
 
-def _get_sender(name, email):
+def _format_email_with_name(name, email):
     return unicode("{} <{}>").format(name, email)
 
 
