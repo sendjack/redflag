@@ -151,7 +151,6 @@ def send_comment_on_task(service, task_id, recipient, message):
 
 def send_email_to_customer(customer, subject, body_text):
     """Send email to customer from Jackalope."""
-    print 'customer', customer
     recipient = _format_email_with_name(customer.full_name, customer.email)
     return send_email_from_jack(recipient, subject, body_text)
 
@@ -207,7 +206,6 @@ def send_email(sender, recipient, subject, body):
     body : `str`
 
     """
-    print 'send_email', sender, recipient, subject, body
     data_dict = {
             MAIL.FROM: sender,
             MAIL.TO: [recipient],
