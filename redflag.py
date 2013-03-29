@@ -19,6 +19,7 @@ _mailgun_domain = None
 _default_name = unicode("")
 _default_email = unicode("")
 _new_comment_subject = unicode("A comment on task ")
+_notification_email = unicode("alpha@sendjack.com")
 
 
 class _Mail(object):
@@ -161,6 +162,17 @@ def send_internal_email_from_service(service, id, subject, body_text):
     return send_email_from_jack(recipient, subject, body_text)
 
 
+def send_email_to_notification_account(notification_type, subject, body_text):
+    """Send internal email to our notification account, which can be used to
+    alert us of an action."""
+    recipient = _notification_email
+    updated_subject = unicode("{}{} - {}").format(
+            _get_default_subject_prefix(),
+            notification_type,
+            subject)
+    return send_email_from_jack(recipient, updated_subject, body_text)
+
+
 def send_email_from_jack(recipient, subject, body):
     """Send a smtp email using Mailgun's API with 'Jack Lope' as the sender
     and return the response dict.
@@ -206,6 +218,8 @@ def send_email(sender, recipient, subject, body):
     body : `str`
 
     """
+    # TODO: Check for empty body_text or body_html as mailgun will throw an
+    # error.
     data_dict = {
             MAIL.FROM: sender,
             MAIL.TO: [recipient],
@@ -243,3 +257,15 @@ def _get_default_sender_name():
         name = "Jack Dev"
 
     return unicode(name)
+
+
+def _get_default_subject_prefix():
+    prefix = ""
+    if Deployment.is_prod():
+        prefix = "PROD: "
+    elif Deployment.is_staging():
+        prefix = "STAGING: "
+    elif Deployment.is_dev():
+        prefix = "DEV: "
+
+    return unicode(prefix)
