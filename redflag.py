@@ -9,7 +9,7 @@
 import requests
 
 from jutil.decorators import constant
-from jutil.environment import Deployment
+from jutil.environment import Deployment, get_unicode
 
 MAILGUN_API_URL = unicode("https://api.mailgun.net/v2")
 MAILGUN_MESSAGES_SUFFIX = unicode("messages")
@@ -19,7 +19,7 @@ _mailgun_domain = None
 _default_name = unicode("")
 _default_email = unicode("")
 _new_comment_subject = unicode("A comment on task ")
-_notification_email = unicode("alpha@sendjack.com")
+_BOT_EMAIL = get_unicode(unicode("BOT_EMAIL"))
 
 
 class _Mail(object):
@@ -165,7 +165,7 @@ def send_internal_email_from_service(service, id, subject, body_text):
 def send_email_to_notification_account(notification_type, subject, body_text):
     """Send internal email to our notification account, which can be used to
     alert us of an action."""
-    recipient = _notification_email
+    recipient = _BOT_EMAIL
     updated_subject = unicode("{}{} - {}").format(
             _get_default_subject_prefix(),
             notification_type,
@@ -250,11 +250,11 @@ def _get_default_sender_name():
     name = ""
 
     if Deployment.is_prod():
-        name = "Jack Lope"
+        name = "Jackalope"
     elif Deployment.is_staging():
-        name = "Jack Staging"
+        name = "Jackalope Staging"
     elif Deployment.is_dev():
-        name = "Jack Dev"
+        name = "Jackalope Dev"
 
     return unicode(name)
 
